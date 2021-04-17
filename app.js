@@ -11,9 +11,6 @@ const MongoClient = require('mongodb').MongoClient;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.736kg.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-
-
-
 client.connect(err => {
   const adminCollection = client.db(`${process.env.DB_NAME}`).collection("adminCollection");
   const OrderCollection = client.db(`${process.env.DB_NAME}`).collection("OrderList");
@@ -62,6 +59,7 @@ client.connect(err => {
   });
 
 
+
   // Find by ID 
   app.get("/order/services/:id", (req, res) => {
 
@@ -70,6 +68,15 @@ client.connect(err => {
         res.send(collection[0])
       })
 
+  });
+
+  // Delete iteam
+  app.get("/deleteServices/:id", (req, res) => {
+
+    serviceCollection.deleteOne({ _id: ObjectID(req.params.id) })
+      .then(respons => {
+        res.send(respons.deletedCount > 0)
+      })
   });
 
   // Order list 
@@ -101,11 +108,6 @@ client.connect(err => {
 
 
 });
-
-
-
-
-
 
 
 module.exports = app
