@@ -72,6 +72,33 @@ client.connect(err => {
 
   });
 
+  // Order list 
+
+  app.get("/adminOrderList", (req, res) => {
+    OrderCollection.find({})
+      .toArray((err, collection) => {
+
+        res.send(collection)
+
+      })
+  });
+
+  // Update statues 
+
+  app.patch("/update/status/:id", (req, res) => {
+
+    console.log(req.body.update)
+
+    OrderCollection.updateOne({ _id: ObjectID(req.params.id) },
+      {
+        $set: { status: req.body.update }
+      }
+    )
+      .then(result => {
+        res.send(result.modifiedCount > 0)
+      })
+  })
+
 
 });
 
