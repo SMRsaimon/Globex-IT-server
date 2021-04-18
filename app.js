@@ -15,6 +15,7 @@ client.connect(err => {
   const adminCollection = client.db(`${process.env.DB_NAME}`).collection("adminCollection");
   const OrderCollection = client.db(`${process.env.DB_NAME}`).collection("OrderList");
   const serviceCollection = client.db(`${process.env.DB_NAME}`).collection("servicesList");
+  const ReviewCollection = client.db(`${process.env.DB_NAME}`).collection("Review");
 
   // add admin 
   app.post("/addAdmin", (req, res) => {
@@ -70,6 +71,23 @@ client.connect(err => {
 
   });
 
+  // find Order iteam  By user Email 
+
+  app.get("/userBookingServices", (req, res) => {
+
+    console.log("query", req.query.email)
+
+    OrderCollection.find({ email: req.query.email })
+      .toArray((err, documents) => {
+
+        res.send(documents)
+
+        console.log(err)
+
+      })
+
+  });
+
   // Delete iteam
   app.get("/deleteServices/:id", (req, res) => {
 
@@ -94,8 +112,6 @@ client.connect(err => {
 
   app.patch("/update/status/:id", (req, res) => {
 
-    console.log(req.body.update)
-
     OrderCollection.updateOne({ _id: ObjectID(req.params.id) },
       {
         $set: { status: req.body.update }
@@ -106,6 +122,25 @@ client.connect(err => {
       })
   })
 
+  // Add user review 
+  app.post("/addReview", (req, res) => {
+    ReviewCollection.insertOne(req.body)
+      .then(result => {
+        res.send(result.insertedCount > 0)
+      })
+
+  });
+  // get review Data
+
+  app.get("/getReview", (req, res) => {
+
+    ReviewCollection.find({})
+      .toArray((err, collection) => {
+        res.send(collection)
+      })
+
+  });
+
 
 });
 
@@ -113,7 +148,3 @@ client.connect(err => {
 module.exports = app
 
 
-// database collection Name
-// adminCollection
-// OrderList
-// servicesList
