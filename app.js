@@ -26,6 +26,24 @@ client.connect(err => {
       })
   });
 
+  // admin Check 
+
+  app.post("/checkAdmin", (req, res) => {
+
+    console.log(req.body.email)
+    adminCollection.find({ email: req.body.email })
+      .toArray((err, documents) => {
+        res.send(documents)
+
+
+      })
+
+
+
+
+
+  });
+
   // add services
   app.post("/addServices", (req, res) => {
     serviceCollection.insertOne(req.body)
@@ -75,7 +93,7 @@ client.connect(err => {
 
   app.get("/userBookingServices", (req, res) => {
 
-    console.log("query", req.query.email)
+
 
     OrderCollection.find({ email: req.query.email })
       .toArray((err, documents) => {
